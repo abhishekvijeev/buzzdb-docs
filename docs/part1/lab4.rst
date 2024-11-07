@@ -1,125 +1,112 @@
 Assignment 4: Operators
-=======================   
+=======================
 
-In the fourth lab, you will be implementing physical operators using the iterator model. 
-
-.. include:: ../shared/getting_started.rst
+In this assignment, you will implement physical operators using the iterator model for your database system. This will involve building various operator classes that perform fundamental database operations such as selection, projection, sorting, joins, aggregation, and set operations.
 
 Description
-----------------
+-----------
 
-In this lab, you will implement physical operators for your database.
+Your task is to develop physical operators that enable your database to execute SQL queries efficiently. These operators form the core of query execution, handling tasks like filtering data, combining datasets, and computing aggregations.
 
-Your code needs to support the following operations:
+You will implement the following operations:
 
-* **Print**: Prints tuples separated by newlines. Attributes should be separated
-  with a comma without any extra spaces.
-* **Projection**: Generates tuples with a subset of attributes.
-* **Select**: Filters tuples by a given predicate. Each predicate consists of one
-  relational operator (`l == r`, `l != r`, `l < r`, `l <= r`, `l > r`, `l >= r`)
-  where `l` stands for an attribute and `r` stands for an attribute or a
-  constant.
-* **Sort**: Sorts tuples by the given attributes and direction (ascending or
-  descending).
-* **HashJoin**: Computes the inner equi-join of two inputs on one attribute.
-* **HashAggregation**: Groups and calculates (potentially multiple) aggregates on
-  the input.
-* **Union**: Computes the union of two inputs with set semantics.
-* **UnionAll**: Computes the union of two inputs with bag semantics.
-* **Intersect**: Computes the intersection of two inputs with set semantics.
-* **IntersectAll**: Computes the intersection of two inputs with bag semantics.
-* **Except**: Computes the difference of two inputs with set semantics.
-* **ExceptAll**: Computes the difference of two inputs with bag semantics.
+- **Print**: Outputs tuples with attributes separated by commas and tuples separated by newlines.
+- **Projection**: Generates tuples containing a subset of attributes.
+- **Select**: Filters tuples based on a predicate involving relational operators (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``). Predicates compare an attribute (``l``) to another attribute or constant (``r``).
+- **Sort**: Sorts tuples based on specified attributes and sort directions (ascending or descending).
+- **HashJoin**: Performs an inner equi-join between two inputs on a specified attribute.
+- **HashAggregation**: Groups tuples and computes aggregates (e.g., ``SUM``, ``COUNT``) over the groups.
+- **Union**: Computes the union of two inputs without duplicates (set semantics).
+- **UnionAll**: Computes the union of two inputs including duplicates (bag semantics).
+- **Intersect**: Retrieves common tuples from two inputs without duplicates (set semantics).
+- **IntersectAll**: Retrieves common tuples from two inputs including duplicates (bag semantics).
+- **Except**: Returns tuples in the first input not present in the second input without duplicates (set semantics).
+- **ExceptAll**: Returns tuples in the first input not present in the second input including duplicates (bag semantics).
 
-.. include:: ../shared/environment_setup.rst
+Additionally, you will extend the ``parseQuery`` and ``executeQuery`` methods to allow execution of SQL-like join queries using the ``JoinExecutor`` implemented earlier (refer to test 14 for details).
 
 Implementation Details
-----------------
-
-Add your implementation to the files `src/include/operators/operators.h` and `src/operators/operators.cc`. There you can find the `Register` class and one class for each operator. All definitions for the methods that you should implement are provided. You can add new member functions and member variables to all classes as needed.
-
-Your implementation should pass all tests starting with `OperatorsTest`. The tests `AdvancedOperatorsTest` and `BonusOperatorsTest` are not mandatory for this assignment. You can complete the assignment without passing these tests and still receive full marks. These tests are only for your own learning and practice. They do not give you any extra credit.
-
-.. include:: ../shared/logistics.rst
-
-Detailed Instructions
 ----------------------
 
-You will add your implementation to the `src/operators/operators.cc` and `src/include/operators/operators.h` files. We provide you with the skeleton code for all the operators introduced above (one class for each operator) and a `Register` class. You will need to add the necessary member variables to the class definitions of each operator in the `src/include/operators/operators.h` file. The functionality of each operator is provided in this header file. Please read through the header file carefully before you start your implementation.
+You will work with the provided C++ skeleton code, which includes the base ``Operator`` class and derived classes for each operator. Your implementation will involve:
 
-First, you will implement the `Register` class. The `Register` class is used to pass tuples between the operators. Each instance of the `Register` class corresponds to a single attribute. It should support storing 64 bit signed integers and fixed size strings of length 16.
+1. **Field Comparison Logic**: Implement comparison operators for the ``Field`` class to support predicates in selection and other operations.
 
-Then you can implement the operator classes. On a high level, each operator is characterized by three functions:
-  
-  * `open()` : Initialize an operator.
-  * `next()` : Try to generate the next tuple; Return true when a new tuple is available.
-  * `close()` : Destroy the operator.
+2. **Operator Classes**: Implement the ``open()``, ``next()``, and ``close()`` methods for each operator. Where applicable, implement the ``get_output()`` method to retrieve the current tuple.
 
-You will implement these functions for all the operators listed above. Where applicable, you will also implement the `get_output()` function. This returns the pointers to the registers of the generated tuple. When `next()` returns true, the Registers will contain the values for the next tuple. Each `Register*` in the vector stands for one attribute of the tuple.
+   - ``open()``: Initialize the operator before execution.
+   - ``next()``: Retrieve the next tuple. Return ``true`` if a tuple is available.
+   - ``close()``: Release resources after execution.
+   - ``get_output()``: Return the pointers to the current tuple's fields after a successful ``next()``.
 
-To help you understand the semantics of the code, we are providing you with the implementation of the `Print` operator here. Note that the actual implementation for each operator may vary significantly.
+You may add additional member functions and variables to support your implementation. Use the provided ``Scan`` and ``Select`` operators as references.
 
-.. code-block:: c++
+**Iterator Model**: Operators should interact using the iterator model, where each operator pulls data from its child operator(s).
 
-  //operator.h
+Testing and Validation
+----------------------
 
-  class Print : public UnaryOperator {
-   private: // Add your member variables here
-    /// Stream of data
-    std::ostream& stream;
+Your implementation should pass all provided test cases to ensure correctness. Focus on:
 
-   public:
-    Print(Operator& input, std::ostream& stream);
+- Correctness of each operator's logic.
+- Proper handling of edge cases.
+- Memory management and resource cleanup.
 
-    ~Print() override;
+Building the Code
+-----------------
 
-    void open() override;
-    bool next() override;
-    void close() override;
-    std::vector<Register*> get_output() override;
-  };
+Compile your code using:
 
-.. code-block:: c++
+.. code-block:: bash
 
-    // operator.cc
+   g++ -fdiagnostics-color -std=c++17 -O3 -Wall -Werror -Wextra <file_name.cpp> -o <output_name.out>
 
-    Print::Print(Operator& input, std::ostream& stream)
-        : UnaryOperator(input), stream(stream) {}
+Ensure your code compiles without warnings or errors, as warnings are treated as errors.
 
-    Print::~Print() = default;
+FAQs
+----
 
-    void Print::open() { input->open(); }
+**How do I implement comparison logic for the ``Field`` class?**
 
-    bool Print::next() {
-      if (input->next()) {
-        std::vector<Register*> input_tuple = input->get_output();
-        size_t reg_itr = 0;
-        size_t tuple_size = input_tuple.size();
-        for (auto reg : input_tuple) {
-          if (reg->get_type() == Register::Type::INT64) {
-            stream << reg->as_int();
-          } else if (reg->get_type() == Register::Type::CHAR16) {
-            stream << reg->as_string();
-          }
+You need to overload the comparison operators (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``) for the ``Field`` class to compare field values correctly. This is essential for the ``Select`` operator and any operation that relies on comparing attribute values.
 
-          if (reg_itr++ != tuple_size - 1) {
-            stream << ',';
-          }
-        }
-        stream.put('\n');
-        return true;
-      }
-      return false;
-    }
+**What is the iterator model used in this assignment?**
 
-    void Print::close() {
-      input->close();
-      stream.clear();
-    }
+The iterator model is a way of processing data where each operator requests data from its child by calling ``next()``. If the child returns ``true``, the operator can then process the data. This allows for efficient, pipeline-style execution with minimal memory overhead.
 
-    std::vector<Register*> Print::get_output() {
-      // Print has no output
-      return {};
-    }
+**How should I handle sorting in the ``Sort`` operator?**
 
-.. include::../shared/collaboration_grading.rst
+In the ``Sort`` operator's ``open()`` method, you can read all tuples from the child operator and store them in a data structure like a vector. Then, sort the vector based on the specified attributes and sort directions. In the ``next()`` method, return tuples from the sorted vector one at a time.
+
+**What's the difference between set semantics and bag semantics?**
+
+- **Set Semantics**: Duplicate tuples are not included in the result. Operations like ``Union``, ``Intersect``, and ``Except`` eliminate duplicates.
+- **Bag Semantics**: Duplicates are included in the result. Operations like ``UnionAll``, ``IntersectAll``, and ``ExceptAll`` retain duplicates based on their occurrence in the inputs.
+
+**How do I extend ``parseQuery`` and ``executeQuery`` for join queries?**
+
+Modify these methods to parse join queries and construct an operator tree that includes the ``JoinExecutor``. You'll need to recognize join syntax and create appropriate operator instances to handle the join operation.
+
+**Can I add additional helper methods or variables?**
+
+Yes, you are encouraged to add helper methods and member variables as needed to support your implementation, as long as they adhere to the assignment's requirements.
+
+**How do I handle multiple aggregates in ``HashAggregation``?**
+
+You can use a data structure (e.g., a map) to group tuples based on the grouping attributes. Then, compute the aggregates for each group by iterating over the grouped data and calculating the required aggregate functions.
+
+**Do I need to handle complex predicates in ``Select``?**
+
+For this assignment, each predicate consists of a single relational operator between an attribute and another attribute or constant. You are not required to handle compound predicates involving logical operators like ``AND`` or ``OR``.
+
+**What resources can I refer to for this assignment?**
+
+- The skeleton code and provided operator implementations (``Scan``, ``Select``).
+- Lecture notes or textbooks covering database operators and the iterator model.
+- Online resources or documentation on database physical operator implementations.
+
+**How does the ``JoinExecutor`` work in this context?**
+
+The ``JoinExecutor`` performs a join operation between two inputs based on specified attributes. In this assignment, you will integrate it into your operator tree to handle join queries parsed from SQL-like statements.
+
+---
