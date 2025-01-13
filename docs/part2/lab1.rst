@@ -13,7 +13,7 @@ We have provided you with a set of unimplemented functions. You will need to fil
 Environment Setup
 ----------------
 
-**Start by downloading the zip file provided for this assignment from Canvas.**
+**Start by downloading the zip file provided for this assignment from** `Canvas <https://gatech.instructure.com/courses/448002/files/folder/Programming%20Assignments>`__
 
 Setup the development environment `using the instructions given here <https://buzzdb-docs.readthedocs.io/part1/setup.html>`__.
 
