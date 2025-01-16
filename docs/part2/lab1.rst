@@ -30,6 +30,8 @@ Implementation Details
 
 We provide you with the skeleton code required to implement the algorithm. You only need to fill in the ``external_sort()`` function in ``src/external_sort/external_sort.cc`` file. You are allowed to add helper functions in this file. Do not change the signature of the ``external_sort()`` function. It should take an input file that contains unsigned 64 bit integers, the number of values in the input file, an output file, and a memory constraint value (in bytes). The output file should contain values from the input file in ascending order. Your implementation must not use more bytes of heap memory than the number specified as the memory constraint. 
 
+You are allowed to use ``std::sort`` for in-memory sorting of individual chunks, not for the entire task.
+
 You should use the ``File`` API provided in ``src/include/storage/file.h`` to handle disk I/O, and to create temporary files for individual runs. You should skim through ``src/include/storage/file.h`` to understand the file API. **You are required to create a new temporary file for each individual run.** 
 
 You are allowed to use the C++ Standard libary (std) functions for the individual runs, and for the K-way merge.  For the K-way-merge, the ``std::priority_queue`` data structure or these heap functions ``std::make_heap()``, ``std::push_heap()``, and ``std::pop_heap()`` will come in handy. 
@@ -61,9 +63,7 @@ You should also check your implementation against the unit tests provided in `te
 
   ./test/external_sort_test
  
-Passing all the test cases is a requirement but does not automatically mean that you will get full points. We will test your implementation with more test cases.
-
-Additionally, your implementation will be checked for memory leaks. You can check for memory leaks using valgrind.
+You can check for memory leaks using valgrind.
 
 .. code-block:: sh
 
@@ -80,7 +80,7 @@ Remove the `verbose` flag to only get summary information instead of detailed te
 Logistics 
 ---------
 
-You must submit your code (see below) as well as an one-page writeup (in a file named `REPORT.md`) describing your solution. In the writeup, mention: (1) the design decisions you made, and (2) the missing components in your code. We will award partial credits based on this writeup (if you are unable to finish the implementation before the due date and/or if it fails any test cases).
+You must format and submit your code as mentioned below.
 
 Collaboration 
 ~~~~~~~~~~~~~
@@ -101,7 +101,7 @@ You should submit your code as a zip file via Gradescope. We have set up an auto
 Grading 
 -------
 
-Grade will be based on whether or not your code passes the autograder test suite. These tests will be a superset of the tests we have provided. We will award partial marks for submissions that fail the autograder test suite (based on the writeup).
+Grade will be based on the number of tests passed in the autograder test suite.
 
 
 Detailed Instructions
