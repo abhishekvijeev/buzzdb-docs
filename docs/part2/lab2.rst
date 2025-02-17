@@ -228,13 +228,11 @@ Submitting Your Assignment
 
 You will be submitting your assignment on Gradescope. You are expected to run :file:`submit.sh` and submit the generated zip to the autograder.
 
-You can use :file:`REPORT.md` to describe the following design and program criteria (**optional**). In case you don't complete all the testcases, we will award you partial points based on the report.
-
 
 Grading
 ---------
 
-The maximum score on this assignment is 100. If you get 100 on the autograder that is your score. If you get score less than 100 we will award partial points based on the report. 
+The maximum score on this assignment is 100. If you get 100 on the autograder that is your score. 
 
 Frequently Asked Questions
 ---------------------------
